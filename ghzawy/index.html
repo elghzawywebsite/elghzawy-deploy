@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ghzawy</title>
+    <link href="ghzawy/ghzawyStyles.css" rel="stylesheet" >
+
+</head>
+<body>
+    <div id="container">
+        <table id="content">
+            <thead>
+            
+                <th>الاسم</th>
+                <th>الصف</th>
+                <th>رقم الطالب</th>
+                <th>رقم ولي الامر</th>
+                <th>الميعاد</th>
+            
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+
+        </table>
+    </div>
+    <script type="text/javascript">
+        async function populateTable() {
+          try {
+            const request = await fetch('/applications-ghzawy');
+            const allApplications = await request.json();
+            let tableBody = document.getElementById('tableBody');
+        
+            allApplications.forEach((element) => {
+              let tr = document.createElement('tr');
+              let studentName = document.createElement('td');
+              let grade = document.createElement('td');
+              let studentNumber = document.createElement('td');
+              let parentNumber = document.createElement('td');
+              let time = document.createElement('td');
+              function gradeReform(ele){
+              switch(ele.grade){
+                case "prep1" :
+                return "الاول الاعدادي"; 
+                break;
+
+                case "prep2" :
+                return "الثاني الاعدادي"; 
+                break;
+
+                case "prep3" :
+                return "الثالث الاعدادي"; 
+                break;
+
+                case "sec1" :
+                return "الاول الثانوي"; 
+                break;
+                
+                case "sec2s" :
+                return "الثاني الثانوي (علمي)"; 
+                break;
+
+                case "sec2l" :
+                return "الثاني الثانوي (ادبي)"; 
+                break;
+
+                case "sec3" :
+                return "الثالث الثانوي"; 
+                break;
+
+              }
+              }
+              studentName.textContent = element.studentName;
+              grade.textContent = gradeReform(element);
+              studentNumber.textContent = element.studentNumber;
+              parentNumber.textContent = element.parentNumber;
+              time.textContent = element.time;
+        
+              tr.append(...[studentName, grade, studentNumber, parentNumber , time]);
+              tableBody.appendChild(tr);
+            });
+          } catch (error) {
+            console.log("error", error);
+          }
+        }
+        
+        // Call the function to populate the table
+        populateTable();
+    </script>
+</body>
+</html>
