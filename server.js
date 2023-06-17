@@ -7,8 +7,8 @@ const util = require('util');
 const readFileAsync = util.promisify(fs.readFile);
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
+const ejs = require('ejs');
 const uri = 'mongodb+srv://ayman:01279463663@cluster0.kolkapz.mongodb.net/applications?retryWrites=true&w=majority';
-
 const app = express();
 const port = process.env.PORT || 3030;
 
@@ -16,7 +16,9 @@ const port = process.env.PORT || 3030;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
+app.set('views', path.join(__dirname, 'website'));
 app.use(express.static('website'));
+app.set('view engine', 'ejs');
 
 
 /*----------------------------------------------------------------------------------------------------------*/
@@ -52,29 +54,6 @@ app.post('/submit', async (req, res) => {
 });
 
 
-/*-------------------------------------------------------------------------------*/
-
-app.get('/applications-ghzawy', (req, res) => {
-
-  (async () => {
-    try {
-      await mongoose.connect(uri, { useNewUrlParser: true });
-  
-      const db = mongoose.connection.db;
-      const applicationsData = await db.collection('applications').find().toArray();
-  
-      // Close the MongoDB connection
-      mongoose.connection.close();
-  
-      res.json(applicationsData);
-    } catch (error) {
-      console.error(error);
-    }
-  })();
-  
-  });
-
-
 /*------------------------------------------------------------------------------------------------------------------*/
 app.post('/login-verification', async (req, res) => { 
   try {
@@ -85,16 +64,31 @@ app.post('/login-verification', async (req, res) => {
     const bcryptRes = await bcrypt.compare(formData.password, jsonData.password);
 
     if (formData.userName === jsonData.userName && bcryptRes && jsonData.auth === "admin") {
-      const filePath = path.join(__dirname, '/ghzawy/index.html');
-      return res.sendFile(filePath);
-    } else {
-      return res.status(401).redirect('/submits/faild.html');
-    }
+      res.redirect('ghzawy');
+    } 
   } catch (err) {
     console.error(err);
     return res.status(500).redirect('/submits/faild.html');
   }
 });
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------*/
+app.get('/ghzawy', (req, res) => {
+  (async () => {
+    try {
+      await mongoose.connect(uri, { useNewUrlParser: true });
+  
+      const db = mongoose.connection.db;
+      const applicationsData = (await db.collection('applications').find().toArray());
+  
+      // Close the MongoDB connection
+      mongoose.connection.close();
+  
+      res.render('admin/index', { applicationsData: JSON.stringify(applicationsData) });
 
+    } catch (error) {
+      res.redirect('/submits/faild.html')
+    }
+  })();
+});
 
 
