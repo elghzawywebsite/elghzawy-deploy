@@ -56,6 +56,7 @@ app.post('/submit', async (req, res) => {
 
 /*------------------------------------------------------------------------------------------------------------------*/
 app.post('/login-verification', async (req, res) => { 
+
   try {
     const formData = req.body;
     const userData = await readFileAsync('users.json');
@@ -64,7 +65,7 @@ app.post('/login-verification', async (req, res) => {
     const bcryptRes = await bcrypt.compare(formData.password, jsonData.password);
 
     if (formData.userName === jsonData.userName && bcryptRes && jsonData.auth === "admin") {
-      res.redirect('ghzawy');
+      res.redirect('dashboard');
     }else{
       return res.status(500).redirect('submits/faild.html');
     }
@@ -72,10 +73,11 @@ app.post('/login-verification', async (req, res) => {
     console.error(err);
     return res.status(500).redirect('submits/faild.html');
   }
+
 });
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------*/
-app.get('/ghzawy', (req, res) => {
-  (async () => {
+app.get('/dashboard',  async (req, res) => {
+  
     try {
       await mongoose.connect(uri, { useNewUrlParser: true });
   
@@ -90,7 +92,6 @@ app.get('/ghzawy', (req, res) => {
     } catch (error) {
       res.redirect('submits/faild.html')
     }
-  })();
 });
 
 
