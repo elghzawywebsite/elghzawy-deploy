@@ -6,6 +6,7 @@ const path = require('path');
 const util = require('util');
 const readFileAsync = util.promisify(fs.readFile);
 const jwt = require('jsonwebtoken');
+const secretKey = '84687364258784466584516654';
 const mongoose = require('mongoose');
 const ejs = require('ejs');
 const uri = 'mongodb+srv://ayman:01279463663@cluster0.kolkapz.mongodb.net/applications?retryWrites=true&w=majority';
@@ -65,12 +66,15 @@ app.post('/login-verification', async (req, res) => {
     const bcryptRes = await bcrypt.compare(formData.password, jsonData.password);
 
     if (formData.userName === jsonData.userName && bcryptRes && jsonData.auth === "admin") {
-      res.redirect('dashboard');
+            // Generate JWT token
+    const token = jwt.sign({ userName: formData.userName }, secretKey);
+
+    res.cookie('loginToken', token); // Set token as a cookie named 'loginToken'
+     res.redirect('dashboard');
     }else{
       return res.status(500).redirect('submits/faild.html');
     }
   } catch (err) {
-    console.error(err);
     return res.status(500).redirect('submits/faild.html');
   }
 
@@ -78,20 +82,28 @@ app.post('/login-verification', async (req, res) => {
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------*/
 app.get('/dashboard',  async (req, res) => {
   
-    try {
-      await mongoose.connect(uri, { useNewUrlParser: true });
-  
-      const db = mongoose.connection.db;
-      const applicationsData = (await db.collection('applications').find().toArray());
-  
-      // Close the MongoDB connection
-      mongoose.connection.close();
-  
-      res.render('admin/index', { applicationsData: JSON.stringify(applicationsData) });
+  try {
+    const token = req.cookies['loginToken'];
 
-    } catch (error) {
-      res.redirect('submits/faild.html')
+    if (!token) {
+      return res.status(401).redirect('submits/faild.html');
     }
+
+    jwt.verify(token, secretKey, async (err, decoded) => {
+      if (err) {
+        return res.status(401).redirect('submits/faild.html');
+      }
+
+      await mongoose.connect(uri, { useNewUrlParser: true });
+      const db = mongoose.connection.db;
+      const applicationsData = await db.collection('applications').find().toArray();
+      mongoose.connection.close();
+
+      res.render('admin/index', { applicationsData: JSON.stringify(applicationsData) });
+    });
+  } catch (error) {
+    res.redirect('submits/faild.html');
+  }
 });
 
 
