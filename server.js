@@ -86,7 +86,7 @@ app.get('/dashboard',  async (req, res) => {
     const token = req.cookies['loginToken'];
 
     if (!token) {
-      return res.status(401).redirect('submits/faild.html');
+      return res.status(401).redirect('login');
     }
 
     jwt.verify(token, secretKey, async (err, decoded) => {
