@@ -39,17 +39,17 @@ app.post('/submit', async (req, res) => {
     if (existingDocument) {
       // The studentName already exists in the database
       mongoose.connection.close();
-      return res.status(409).redirect('/submits/duplicate.html');
+      return res.status(409).redirect('submits/duplicate.html');
     }
 
     await db.collection('applications').insertOne(formData);
 
     // Close the MongoDB connection
     mongoose.connection.close();
-    return res.status(200).redirect('/submits/success.html');
+    return res.status(200).redirect('submits/success.html');
   } catch (error) {
     console.error(error);
-    return res.status(500).redirect('/submits/fail.html');
+    return res.status(500).redirect('submits/fail.html');
   }
 });
 
@@ -65,10 +65,12 @@ app.post('/login-verification', async (req, res) => {
 
     if (formData.userName === jsonData.userName && bcryptRes && jsonData.auth === "admin") {
       res.redirect('ghzawy');
-    } 
+    }else{
+      return res.status(500).redirect('submits/faild.html');
+    }
   } catch (err) {
     console.error(err);
-    return res.status(500).redirect('/submits/faild.html');
+    return res.status(500).redirect('submits/faild.html');
   }
 });
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -86,7 +88,7 @@ app.get('/ghzawy', (req, res) => {
       res.render('admin/index', { applicationsData: JSON.stringify(applicationsData) });
 
     } catch (error) {
-      res.redirect('/submits/faild.html')
+      res.redirect('submits/faild.html')
     }
   })();
 });
