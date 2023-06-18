@@ -6,7 +6,7 @@ const path = require('path');
 const util = require('util');
 const readFileAsync = util.promisify(fs.readFile);
 const jwt = require('jsonwebtoken');
-const secretKey = '84687364258784466584516654';
+const secretKey = 'b4880f3f65ef4b1a7415f96dab24c843c5fca6fc7692ccac7f9f085d334a7eaf8f2c4c2b8ef401234567890abcdef1234567890abcdef1234567890abcdef';
 const mongoose = require('mongoose');
 const ejs = require('ejs');
 const uri = 'mongodb+srv://ayman:01279463663@cluster0.kolkapz.mongodb.net/applications?retryWrites=true&w=majority';
