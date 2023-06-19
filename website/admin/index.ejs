@@ -21,6 +21,7 @@
         <table id="content">
             <thead>
             
+                <th>الرقم</th>
                 <th>الاسم</th>
                 <th>الصف</th>
                 <th>رقم الطالب</th>
@@ -37,15 +38,17 @@
 <script type="text/javascript">
 
 const allApplications = JSON.parse(`<%- applications %>`);
+let counter = 0;
 let tableBody = document.getElementById('tableBody');
 allApplications.forEach((element) => {
-        
+        counter++ ;
         let tr = document.createElement('tr');
         let studentName = document.createElement('td');
         let grade = document.createElement('td');
         let studentNumber = document.createElement('td');
         let parentNumber = document.createElement('td');
         let time = document.createElement('td');
+        let number = document.createElement('td');
         function gradeReform(ele){
         switch(ele.grade){
           case "prep1" :
@@ -83,8 +86,9 @@ allApplications.forEach((element) => {
         studentNumber.textContent = element.studentNumber;
         parentNumber.textContent = element.parentNumber;
         time.textContent = element.time;
+        number.textContent = counter;
   
-        tr.append(...[studentName, grade, studentNumber, parentNumber , time]);
+        tr.append(...[number,studentName, grade, studentNumber, parentNumber , time]);
         tableBody.appendChild(tr);
     })
 

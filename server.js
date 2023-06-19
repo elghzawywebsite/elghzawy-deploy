@@ -11,6 +11,7 @@ const mongoose = require('mongoose');
 const ejs = require('ejs');
 const uri = 'mongodb+srv://ayman:01279463663@cluster0.kolkapz.mongodb.net/applications?retryWrites=true&w=majority';
 const app = express();
+const cache = new Map();
 const port = process.env.PORT || 3030;
 
 // Middleware
@@ -32,8 +33,6 @@ async function connectToDatabase() {
   }
 }
 
-// Cache
-const cache = new Map();
 
 app.listen(port, () => {
   console.log("Server Is Running!\nClick http://localhost:3030/ To View.");
