@@ -81,17 +81,4 @@ studentNameInput.addEventListener('input', function() {
   studentNameValidation.innerText = '' ;
 });
 
- /*------------------------------------------------------------------------------------------------------------------------------*/
-let dispApp = async()=>{
- const request =await fetch('/applications-ghzawy')
- try{
-    const allData = await request.json();
-    
-    }
-    catch(error){
-        console.log("error",error);
-        
-    }
- 
-  };
-dispApp();
+
