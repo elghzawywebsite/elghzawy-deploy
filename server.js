@@ -144,13 +144,3 @@ app.get("/dashboard", async (req, res) => {
     res.status(500).redirect("/submits/faild.html");
   }
 });
-app.get("/students", async (req, res) => {
-  const db = await connectToDatabase();
-  const applicationsData = await db
-    .collection("applications")
-    .find({
-      $or: [{ grade: "sec2s" }, { grade: "sec2l" }],
-    })
-    .toArray();
-  res.send(applicationsData);
-});
