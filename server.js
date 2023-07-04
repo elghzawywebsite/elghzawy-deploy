@@ -16,14 +16,8 @@ const jwt = require("jsonwebtoken");
 const cache = new Map();
 const ejs = require("ejs");
 
-const morgan = require("morgan");
-if (process.env.NODE_ENV == "development") {
-  app.use(morgan("dev"));
-  console.log(`mode : ${process.env.NODE_ENV}`);
-}
-
 const secretKey = process.env.secretKey;
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.port || 8080;
 const uri = process.env.uri;
 
 // Middleware
