@@ -94,7 +94,7 @@ app.post("/login-verification", async (req, res) => {
       // Generate JWT token
       const token = jwt.sign({ userName: formData.userName }, secretKey);
 
-      res.cookie("loginToken", token); // Set token as a cookie named 'loginToken'
+      res.cookie("lg", token); // Set token as a cookie named 'loginToken ('lg')'
       res.redirect("dashboard");
     } else {
       return res.status(401).redirect("/submits/faild.html");
@@ -108,7 +108,7 @@ app.post("/login-verification", async (req, res) => {
 // Dashboard route
 app.get("/dashboard", async (req, res) => {
   try {
-    const token = req.cookies["loginToken"];
+    const token = req.cookies["lg"];
 
     if (!token) {
       return res.status(401).redirect("login");
