@@ -18,7 +18,10 @@ const ejs = require("ejs");
 const secretKey = process.env.secretKey;
 const PORT = process.env.port || 8080;
 const uri = process.env.uri;
-const currentYear = new Date().getFullYear();
+
+currentYear = () => {
+  return new Date().getFullYear();
+};
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
@@ -29,12 +32,13 @@ app.use(express.static("website"));
 app.set("view engine", "ejs");
 
 // Connect to MongoDB
-async function connectToDatabase(currentUri) {
+async function connectToDatabase() {
   try {
-    await mongoose.connect(uri + currentUri, {
+    await mongoose.connect(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
+    console.log("connected to database successfully");
     return mongoose.connection.db;
   } catch (error) {
     console.error("Error connecting to the database:", error);
@@ -49,21 +53,20 @@ app.listen(PORT, () => {
 // Handle form submission
 app.post("/submit", async (req, res) => {
   const formData = req.body;
-  formData.year = new Date().getFullYear();
+  formData.year = currentYear();
   const studentName = formData.studentName;
 
   try {
-    const currentUri = '/applications?retryWrites=true&w=majority';
-    const db = await connectToDatabase(currentUri);
-    const existingDocument = await db.collection(`${currentYear}`).findOne({ studentName });
+    const db = await connectToDatabase();
+    const existingDocument = await db
+      .collection(`${currentYear()}`)
+      .findOne({ studentName });
 
     if (existingDocument) {
-      await mongoose.connection.close();
       return res.status(409).redirect("/submits/duplicate.html");
     }
 
-    await db.collection(`${currentYear}`).insertOne(formData);
-    await mongoose.connection.close();
+    await db.collection(`${currentYear()}`).insertOne(formData);
 
     return res.status(200).redirect("/submits/success.html");
   } catch (error) {
@@ -76,11 +79,15 @@ app.post("/submit", async (req, res) => {
 app.post("/login-verification", async (req, res) => {
   try {
     const formData = req.body;
-    const currentUri = '/adminUsers?retryWrites=true&w=majority';
-    const db = await connectToDatabase(currentUri);
-    const jsonData = await db.collection('admin').findOne({ auth: 'admin' });
+    const db = await connectToDatabase();
+    const jsonData = await db
+      .collection("adminUsers")
+      .findOne({ auth: "admin" });
 
-    const bcryptRes = await bcrypt.compare(formData.password, jsonData.password);
+    const bcryptRes = await bcrypt.compare(
+      formData.password,
+      jsonData.password
+    );
 
     if (
       formData.userName === jsonData.userName &&
@@ -100,7 +107,6 @@ app.post("/login-verification", async (req, res) => {
   }
 });
 
-
 // Dashboard route
 app.get("/dashboard", async (req, res) => {
   try {
@@ -115,11 +121,13 @@ app.get("/dashboard", async (req, res) => {
         return res.status(401).redirect("/submits/faild.html");
       }
 
-      const currentUri = '/applications?retryWrites=true&w=majority';
-      const db = await connectToDatabase(currentUri);
+      const db = await connectToDatabase();
       const collectionsList = await db.listCollections().toArray();
-      const collectionsNames = collectionsList.map(({ name }) => name);
-
+      let collectionsNames = collectionsList.map(({ name }) => name);
+      collectionsNames = collectionsNames.filter(
+        (name) => name !== "adminUsers"
+      );
+      
       const allApplicationsData = [];
 
       for (const collectionName of collectionsNames) {
@@ -128,8 +136,6 @@ app.get("/dashboard", async (req, res) => {
         allApplicationsData.push(...documents);
       }
 
-      await mongoose.connection.close();
-      
       res.status(200).render("admin/index", {
         applications: JSON.stringify(allApplicationsData),
         collectionsNames: JSON.stringify(collectionsNames),
