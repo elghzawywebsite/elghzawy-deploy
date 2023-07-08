@@ -31,7 +31,7 @@ app.set("view engine", "ejs");
 // Connect to MongoDB
 async function connectToDatabase(currentUri) {
   try {
-    await mongoose.connect(uri+currentUri, {
+    await mongoose.connect(uri + currentUri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
@@ -53,21 +53,17 @@ app.post("/submit", async (req, res) => {
   const studentName = formData.studentName;
 
   try {
-
     const currentUri = '/applications?retryWrites=true&w=majority';
     const db = await connectToDatabase(currentUri);
-    const existingDocument = await db
-      .collection(`${currentYear}`)
-      .findOne({ studentName });
+    const existingDocument = await db.collection(`${currentYear}`).findOne({ studentName });
 
     if (existingDocument) {
-        mongoose.connection.close();
-      // The studentName already exists in the database
+      await mongoose.connection.close();
       return res.status(409).redirect("/submits/duplicate.html");
     }
 
     await db.collection(`${currentYear}`).insertOne(formData);
-    mongoose.connection.close();
+    await mongoose.connection.close();
 
     return res.status(200).redirect("/submits/success.html");
   } catch (error) {
@@ -80,25 +76,21 @@ app.post("/submit", async (req, res) => {
 app.post("/login-verification", async (req, res) => {
   try {
     const formData = req.body;
-    const currentUri = '/adminUsers?retryWrites=true&w=majority'
+    const currentUri = '/adminUsers?retryWrites=true&w=majority';
     const db = await connectToDatabase(currentUri);
-    const jsonData = await db.collection('admin').findOne( { auth: 'admin' } );
-    mongoose.connection.close()
+    const jsonData = await db.collection('admin').findOne({ auth: 'admin' });
+    await mongoose.connection.close();
 
-    const bcryptRes = await bcrypt.compare(
-      formData.password,
-      jsonData.password
-    );
+    const bcryptRes = await bcrypt.compare(formData.password, jsonData.password);
 
     if (
       formData.userName === jsonData.userName &&
       bcryptRes &&
       jsonData.auth === "admin"
     ) {
-      // Generate JWT token
-      const token = jwt.sign({ userName: formData.userName }, secretKey);
+      const token = await jwt.sign({ userName: formData.userName }, secretKey);
 
-      res.cookie("lg", token); // Set token as a cookie named 'loginToken ('lg')'
+      res.cookie("lg", token);
       res.redirect("dashboard");
     } else {
       return res.status(401).redirect("/submits/faild.html");
@@ -111,40 +103,39 @@ app.post("/login-verification", async (req, res) => {
 
 // Dashboard route
 app.get("/dashboard", async (req, res) => {
-    try {
-      const token = req.cookies["lg"];
-  
-      if (!token) {
-        return res.status(401).redirect("login");
-      }
-  
-      jwt.verify(token, secretKey, async (err, decoded) => {
-        if (err) {
-          return res.status(401).redirect("/submits/faild.html");
-        }
-  
-        const currentUri = '/applications?retryWrites=true&w=majority';
-        const db = await connectToDatabase(currentUri);
-        const collectionsList = await db.listCollections().toArray();
-        const collectionsNames = collectionsList.map(({ name }) => name);
-  
-        const allApplicationsData = [];
-  
-        for (const collectionName of collectionsNames) {
-          const collection = db.collection(collectionName);
-          const documents = await collection.find({}).toArray();
-          allApplicationsData.push(...documents);
-        }
-  
-        mongoose.connection.close(); // Close the database connection
-  
-        res.status(200).render("admin/index", {
-          applications: JSON.stringify(allApplicationsData),
-          collectionsNames: JSON.stringify(collectionsNames)
-        });
-      });
-    } catch (err) {
-      res.status(500).redirect("/submits/faild.html");
+  try {
+    const token = req.cookies["lg"];
+
+    if (!token) {
+      return res.status(401).redirect("login");
     }
-  });
-  
+
+    jwt.verify(token, secretKey, async (err, decoded) => {
+      if (err) {
+        return res.status(401).redirect("/submits/faild.html");
+      }
+
+      const currentUri = '/applications?retryWrites=true&w=majority';
+      const db = await connectToDatabase(currentUri);
+      const collectionsList = await db.listCollections().toArray();
+      const collectionsNames = collectionsList.map(({ name }) => name);
+
+      const allApplicationsData = [];
+
+      for (const collectionName of collectionsNames) {
+        const collection = db.collection(collectionName);
+        const documents = await collection.find({}).toArray();
+        allApplicationsData.push(...documents);
+      }
+
+      await mongoose.connection.close();
+
+      res.status(200).render("admin/index", {
+        applications: JSON.stringify(allApplicationsData),
+        collectionsNames: JSON.stringify(collectionsNames),
+      });
+    });
+  } catch (err) {
+    res.status(500).redirect("/submits/faild.html");
+  }
+});
