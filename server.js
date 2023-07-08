@@ -49,6 +49,7 @@ app.listen(PORT, () => {
 // Handle form submission
 app.post("/submit", async (req, res) => {
   const formData = req.body;
+  formData.year = new Date().getFullYear();
   const studentName = formData.studentName;
 
   try {

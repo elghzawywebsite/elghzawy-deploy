@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>dashboard</title>
-    <link href="/admin/styles.css" rel="stylesheet" >
+    <link href="admin/styles.css" rel="stylesheet" >
 
 </head>
 <!-- Google tag (gtag.js) -->
@@ -17,6 +17,14 @@
   gtag('config', 'G-ZHKV326MLQ');
 </script>
 <body>
+    <h1>
+        الحجوزات
+    </h1>
+    <div id="selectDiv">
+        <select id="select">
+            <option value="" selected disabled>اختر- العام</option>
+        </select>
+    </div>
     <div id="container">
         <table id="content">
             <thead>
@@ -29,6 +37,7 @@
             
             </thead>
             <tbody id="tableBody">
+
             </tbody>
 
         </table>
@@ -38,8 +47,28 @@
 
 const allApplications = JSON.parse(`<%- applications %>`);
 let tableBody = document.getElementById('tableBody');
-allApplications.forEach((element) => {
-        let tr = document.createElement('tr');
+let select = document.getElementById('select');
+let yearArr = [] ;
+
+allApplications.forEach((element) =>{
+if( !( yearArr.includes(element.year) ) ){
+yearArr.push(element.year);
+}
+});
+
+yearArr.forEach((element)=>{
+let newOption = document.createElement('option');
+newOption.value = element;
+ newOption.textContent = element;
+ select.appendChild(newOption);
+});
+
+let buildTable = ()=>{
+    tableBody.innerHTML = '';
+    
+        allApplications.forEach((element) => {
+            if( (element.year == select.value) ){
+                let tr = document.createElement('tr');
         let studentName = document.createElement('td');
         let grade = document.createElement('td');
         let studentNumber = document.createElement('td');
@@ -84,8 +113,17 @@ allApplications.forEach((element) => {
         time.textContent = element.time;
   
         tr.append(...[studentName, grade, studentNumber, parentNumber , time]);
-        tableBody.appendChild(tr);
-    })
+        tableBody.appendChild(tr); 
+            }
 
-</script>
+
+    });
+
+    }
+
+
+
+    select.addEventListener('change', buildTable);
+
+</script> 
 </html>

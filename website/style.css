@@ -32,7 +32,7 @@ nav {
     border-radius: 25px;
     -webkit-transition: all 0.3s ease-in-out;
     transition: all 0.3s ease-in-out;
-    background:linear-gradient(to right, #f7b733, #fc4a1a);;
+    background:linear-gradient(to right, #f7b733, #fc4a1a);
   }
   .navbar-brand {
     font-size: 28px;
