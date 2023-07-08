@@ -306,8 +306,9 @@ transform: scale(1.1);
 }
 .aboutCardText{
   display: flex;
+  width: 90%;
   padding: 10px 20px;
-  margin-top: 30px;
+  margin-top: 35px;
   justify-content: center;
   align-items: center;
   border-radius: 7px;
@@ -610,8 +611,10 @@ margin: 20px 0;
 #aboutHeader div{
   font-size: 18px;
 }
-
+.aboutCardText{
+  font-size: 18px;
 }
+
 
 
 
