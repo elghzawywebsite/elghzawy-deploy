@@ -38,7 +38,6 @@ async function connectToDatabase() {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    console.log("connected to database successfully");
     return mongoose.connection.db;
   } catch (error) {
     console.error("Error connecting to the database:", error);
@@ -127,7 +126,7 @@ app.get("/dashboard", async (req, res) => {
       collectionsNames = collectionsNames.filter(
         (name) => name !== "adminUsers"
       );
-      
+
       const allApplicationsData = [];
 
       for (const collectionName of collectionsNames) {
