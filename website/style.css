@@ -174,7 +174,7 @@ justify-content: center;
 #videos {
   width: 100%;
   height: auto;
-  background-color: rgb(252, 252, 222);
+  background-color: rgb(236, 236, 234);
 }
   
 #videosHeader{
@@ -304,25 +304,29 @@ transform: scale(1.1);
   padding-left: 15px;
 
 }
-.aboutCards p{
-  padding: 30px 20px;
-  width: 100%;
-  text-align: center;
+.aboutCardText{
+  display: flex;
+  padding: 10px 20px;
+  margin-top: 30px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 7px;
   font-size: 22px;
   font-family: cursive;
-  text-shadow: 4px 4px 6px rgba(93, 90, 90, 0.652);
+  box-shadow: 2px 3px 6px rgba(93, 90, 90, 0.25);
 }
+
 #card1{
 background-color: lightblue;
 color: green;
 }
 #card2{
   background-color: lightgreen;
-  color: red;
+  color: rgb(145, 56, 56);
 }
 #card3{
   background-color: lightsalmon;
-  color: blue;
+  color: lightslategrey;
 }
 #card1:hover{
   transform:rotateZ(8deg);
@@ -439,7 +443,7 @@ margin: 20px 0;
     display: block;
     position:static;
     margin: 0 0 ;
-    background-image: url(/images/shape9.png);
+    background-image: url(/images/shapeB.png);
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
@@ -512,7 +516,7 @@ margin: 20px 0;
     height: 80%;
     margin-left: 0;
     position:static;
-    background-image: url(/images/shape9.png);
+    background-image: url(/images/shapeB.png);
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
