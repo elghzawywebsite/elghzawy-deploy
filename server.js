@@ -82,8 +82,6 @@ app.post("/login-verification", async (req, res) => {
 
     const bcryptRes = await bcrypt.compare(formData.password, jsonData.password);
 
-    await mongoose.connection.close();
-
     if (
       formData.userName === jsonData.userName &&
       bcryptRes &&
@@ -131,7 +129,7 @@ app.get("/dashboard", async (req, res) => {
       }
 
       await mongoose.connection.close();
-
+      
       res.status(200).render("admin/index", {
         applications: JSON.stringify(allApplicationsData),
         collectionsNames: JSON.stringify(collectionsNames),
