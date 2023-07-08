@@ -44,19 +44,12 @@
     </div>
 </body>
 <script type="text/javascript">
-
+const collectionsNames = JSON.parse(`<%- collectionsNames %>`).sort((a, b) => a - b);
 const allApplications = JSON.parse(`<%- applications %>`);
 let tableBody = document.getElementById('tableBody');
 let select = document.getElementById('select');
-let yearArr = [] ;
 
-allApplications.forEach((element) =>{
-if( !( yearArr.includes(element.year) ) ){
-yearArr.push(element.year);
-}
-});
-
-yearArr.forEach((element)=>{
+collectionsNames.forEach((element)=>{
 let newOption = document.createElement('option');
 newOption.value = element;
  newOption.textContent = element;
@@ -120,7 +113,6 @@ let buildTable = ()=>{
     });
 
     }
-
 
 
     select.addEventListener('change', buildTable);

@@ -13,12 +13,12 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
-const cache = new Map();
 const ejs = require("ejs");
 
 const secretKey = process.env.secretKey;
 const PORT = process.env.port || 8080;
 const uri = process.env.uri;
+const currentYear = new Date().getFullYear();
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
@@ -29,9 +29,9 @@ app.use(express.static("website"));
 app.set("view engine", "ejs");
 
 // Connect to MongoDB
-async function connectToDatabase() {
+async function connectToDatabase(currentUri) {
   try {
-    await mongoose.connect(uri, {
+    await mongoose.connect(uri+currentUri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
@@ -53,20 +53,21 @@ app.post("/submit", async (req, res) => {
   const studentName = formData.studentName;
 
   try {
-    const db = await connectToDatabase();
+
+    const currentUri = '/applications?retryWrites=true&w=majority';
+    const db = await connectToDatabase(currentUri);
     const existingDocument = await db
-      .collection("applications")
+      .collection(`${currentYear}`)
       .findOne({ studentName });
 
     if (existingDocument) {
+        mongoose.connection.close();
       // The studentName already exists in the database
       return res.status(409).redirect("/submits/duplicate.html");
     }
 
-    await db.collection("applications").insertOne(formData);
-
-    // Clear cache
-    cache.delete("applicationsData");
+    await db.collection(`${currentYear}`).insertOne(formData);
+    mongoose.connection.close();
 
     return res.status(200).redirect("/submits/success.html");
   } catch (error) {
@@ -79,8 +80,10 @@ app.post("/submit", async (req, res) => {
 app.post("/login-verification", async (req, res) => {
   try {
     const formData = req.body;
-    const userData = await readFileAsync("users.json");
-    const jsonData = JSON.parse(userData);
+    const currentUri = '/adminUsers?retryWrites=true&w=majority'
+    const db = await connectToDatabase(currentUri);
+    const jsonData = await db.collection('admin').findOne( { auth: 'admin' } );
+    mongoose.connection.close()
 
     const bcryptRes = await bcrypt.compare(
       formData.password,
@@ -108,40 +111,40 @@ app.post("/login-verification", async (req, res) => {
 
 // Dashboard route
 app.get("/dashboard", async (req, res) => {
-  try {
-    const token = req.cookies["lg"];
-
-    if (!token) {
-      return res.status(401).redirect("login");
+    try {
+      const token = req.cookies["lg"];
+  
+      if (!token) {
+        return res.status(401).redirect("login");
+      }
+  
+      jwt.verify(token, secretKey, async (err, decoded) => {
+        if (err) {
+          return res.status(401).redirect("/submits/faild.html");
+        }
+  
+        const currentUri = '/applications?retryWrites=true&w=majority';
+        const db = await connectToDatabase(currentUri);
+        const collectionsList = await db.listCollections().toArray();
+        const collectionsNames = collectionsList.map(({ name }) => name);
+  
+        const allApplicationsData = [];
+  
+        for (const collectionName of collectionsNames) {
+          const collection = db.collection(collectionName);
+          const documents = await collection.find({}).toArray();
+          allApplicationsData.push(...documents);
+        }
+  
+        mongoose.connection.close(); // Close the database connection
+  
+        res.status(200).render("admin/index", {
+          applications: JSON.stringify(allApplicationsData),
+          collectionsNames: JSON.stringify(collectionsNames)
+        });
+      });
+    } catch (err) {
+      res.status(500).redirect("/submits/faild.html");
     }
-
-    jwt.verify(token, secretKey, async (err, decoded) => {
-      if (err) {
-        return res.status(401).redirect("/submits/faild.html");
-      }
-
-      const cachedData = cache.get("applicationsData");
-      if (cachedData) {
-        return res.render("admin/index", {
-          applications: JSON.stringify(cachedData),
-        });
-      }
-
-      const db = await connectToDatabase();
-      const applicationsData = await db
-        .collection("applications")
-        .find()
-        .toArray();
-
-      cache.set("applicationsData", applicationsData);
-
-      res
-        .status(200)
-        .render("admin/index", {
-          applications: JSON.stringify(applicationsData),
-        });
-    });
-  } catch (err) {
-    res.status(500).redirect("/submits/faild.html");
-  }
-});
+  });
+  
