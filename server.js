@@ -79,9 +79,10 @@ app.post("/login-verification", async (req, res) => {
     const currentUri = '/adminUsers?retryWrites=true&w=majority';
     const db = await connectToDatabase(currentUri);
     const jsonData = await db.collection('admin').findOne({ auth: 'admin' });
-    await mongoose.connection.close();
 
     const bcryptRes = await bcrypt.compare(formData.password, jsonData.password);
+
+    await mongoose.connection.close();
 
     if (
       formData.userName === jsonData.userName &&
@@ -91,7 +92,7 @@ app.post("/login-verification", async (req, res) => {
       const token = await jwt.sign({ userName: formData.userName }, secretKey);
 
       res.cookie("lg", token);
-      res.redirect("dashboard");
+      return res.redirect("dashboard");
     } else {
       return res.status(401).redirect("/submits/faild.html");
     }
@@ -100,6 +101,7 @@ app.post("/login-verification", async (req, res) => {
     return res.status(500).redirect("/submits/faild.html");
   }
 });
+
 
 // Dashboard route
 app.get("/dashboard", async (req, res) => {
