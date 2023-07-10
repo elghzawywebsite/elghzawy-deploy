@@ -71,7 +71,6 @@ selectBuild();
     return window.location.href = "/login" ;
   }
     };
-buildTable( `${new Date().getFullYear()}` );
 select.addEventListener('input', (e) => {
 buildTable(e.target.value)
 }

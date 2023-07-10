@@ -106,28 +106,7 @@ app.post("/login-verification", async (req, res) => {
 });
 
 
-// app.get("/admin", async (req, res) => {
-//   try {
-//     const token = req.cookies["lg"];
-
-//     if (!token) {
-//       return res.status(401).redirect("/login");
-//     }
-
-//      jwt.verify(token, secretKey, async (err, decoded) => {
-//       if (err) {
-//         return res.status(401).redirect("/submits/faild.html");
-//       }
-
-//       return res.status(200).redirect("/admin/main");
-//     });
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).redirect("/submits/faild.html");
-//   }
-// });
-
-// Dashboard route
+// admin Dashboard routes
 app.get("/applicationData", async (req, res) => {
   try {
     const token = req.cookies["lg"];
