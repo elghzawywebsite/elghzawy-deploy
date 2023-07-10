@@ -95,7 +95,7 @@ app.post("/login-verification", async (req, res) => {
       const token = await jwt.sign({ userName: loginData.userName }, secretKey);
 
       res.cookie("lg", token);
-      return res.redirect("/admin");
+      return res.redirect("/dashboard");
     } else {
       return res.status(401).redirect("/login");
     }
