@@ -76,28 +76,28 @@ app.post("/submit", async (req, res) => {
 // Handle login verification
 app.post("/login-verification", async (req, res) => {
   try {
-    const formData = req.body;
+    const loginData = req.body;
     const db = await connectToDatabase();
     const jsonData = await db
       .collection("adminUsers")
       .findOne({ auth: "admin" });
 
     const bcryptRes = await bcrypt.compare(
-      formData.password,
+      loginData.password,
       jsonData.password
     );
 
     if (
-      formData.userName === jsonData.userName &&
+      loginData.userName === jsonData.userName &&
       bcryptRes &&
       jsonData.auth === "admin"
     ) {
-      const token = await jwt.sign({ userName: formData.userName }, secretKey);
+      const token = await jwt.sign({ userName: loginData.userName }, secretKey);
 
       res.cookie("lg", token);
       return res.redirect("/admin");
     } else {
-      return res.status(401).redirect("/submits/faild.html");
+      return res.status(401).redirect("/login");
     }
   } catch (err) {
     console.error("Error verifying login:", err);
