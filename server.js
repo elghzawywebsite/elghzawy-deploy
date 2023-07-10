@@ -13,7 +13,6 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
-const ejs = require("ejs");
 
 const secretKey = process.env.secretKey;
 const PORT = process.env.port || 8080;
@@ -27,9 +26,8 @@ currentYear = () => {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
-app.set("views", path.join(__dirname, "website"));
 app.use(express.static("website"));
-app.set("view engine", "ejs");
+
 
 // Connect to MongoDB
 async function connectToDatabase() {
@@ -44,6 +42,7 @@ async function connectToDatabase() {
     throw error;
   }
 }
+
 
 app.listen(PORT, () => {
   console.log(`Server Is Running!\nClick http://localhost:${PORT}/ To View.`);
@@ -96,7 +95,7 @@ app.post("/login-verification", async (req, res) => {
       const token = await jwt.sign({ userName: formData.userName }, secretKey);
 
       res.cookie("lg", token);
-      return res.redirect("dashboard");
+      return res.redirect("/admin");
     } else {
       return res.status(401).redirect("/submits/faild.html");
     }
@@ -106,16 +105,64 @@ app.post("/login-verification", async (req, res) => {
   }
 });
 
+
+// app.get("/admin", async (req, res) => {
+//   try {
+//     const token = req.cookies["lg"];
+
+//     if (!token) {
+//       return res.status(401).redirect("/login");
+//     }
+
+//      jwt.verify(token, secretKey, async (err, decoded) => {
+//       if (err) {
+//         return res.status(401).redirect("/submits/faild.html");
+//       }
+
+//       return res.status(200).redirect("/admin/main");
+//     });
+//   } catch (err) {
+//     console.log(err);
+//     res.status(500).redirect("/submits/faild.html");
+//   }
+// });
+
 // Dashboard route
-app.get("/dashboard", async (req, res) => {
+app.get("/applicationData", async (req, res) => {
   try {
     const token = req.cookies["lg"];
 
     if (!token) {
-      return res.status(401).redirect("login");
+      return res.status(401).redirect("/login");
     }
 
     jwt.verify(token, secretKey, async (err, decoded) => {
+      if (err) {
+        return res.status(401).redirect("/submits/faild.html");
+      }
+       
+      const collectionName = req.query.key
+      const db = await connectToDatabase();
+      const applicationData = await db.collection(`${collectionName}`).find().toArray();
+
+      res.status(200).json(applicationData);
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).redirect("/submits/faild.html");
+  }
+});
+
+
+app.get("/collectionsNames", async (req, res) => {
+  try {
+    const token = req.cookies["lg"];
+
+    if (!token) {
+      return res.status(401).redirect("/login");
+    }
+
+     jwt.verify(token, secretKey, async (err, decoded) => {
       if (err) {
         return res.status(401).redirect("/submits/faild.html");
       }
@@ -126,21 +173,12 @@ app.get("/dashboard", async (req, res) => {
       collectionsNames = collectionsNames.filter(
         (name) => name !== "adminUsers"
       );
-
-      const allApplicationsData = [];
-
-      for (const collectionName of collectionsNames) {
-        const collection = db.collection(collectionName);
-        const documents = await collection.find({}).toArray();
-        allApplicationsData.push(...documents);
-      }
-
-      res.status(200).render("admin/index", {
-        applications: JSON.stringify(allApplicationsData),
-        collectionsNames: JSON.stringify(collectionsNames),
-      });
+      collectionsNames = collectionsNames.sort((a, b) => a - b);
+      res.status(200).json(collectionsNames);
     });
   } catch (err) {
+    console.log(err);
     res.status(500).redirect("/submits/faild.html");
   }
 });
+
