@@ -120,7 +120,7 @@ app.get("/applicationData", async (req, res) => {
         return res.status(401).redirect("/submits/faild.html");
       }
        
-      const collectionName = req.query.key
+      const collectionName = await req.query.key
       const db = await connectToDatabase();
       const applicationData = await db.collection(`${collectionName}`).find().toArray();
 
