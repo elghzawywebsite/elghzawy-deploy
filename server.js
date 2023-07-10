@@ -117,7 +117,7 @@ app.get("/applicationData", async (req, res) => {
 
     jwt.verify(token, secretKey, async (err, decoded) => {
       if (err) {
-        return res.status(401).redirect("/submits/faild.html");
+        return res.status(401).redirect("/login");
       }
        
       const collectionName = await req.query.key
@@ -143,7 +143,7 @@ app.get("/collectionsNames", async (req, res) => {
 
      jwt.verify(token, secretKey, async (err, decoded) => {
       if (err) {
-        return res.status(401).redirect("/submits/faild.html");
+        return res.status(401).redirect("/login");
       }
 
       const db = await connectToDatabase();
