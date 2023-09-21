@@ -92,9 +92,9 @@ app.post("/login-verification", async (req, res) => {
       bcryptRes &&
       jsonData.auth === "admin"
     ) {
-      const token = await jwt.sign({ userName: loginData.userName }, secretKey);
+      const token = await jwt.sign({ userName: loginData.userName }, secretKey , {expiresIn : 1000 * 60 * 60 * 24 * 365  });
 
-      res.cookie("lg", token);
+      res.cookie("lg", token , { httpOnly: true , maxAge: 1000 * 60 * 60 * 24 * 365  } );
       return res.redirect("/dashboard");
     } else {
       return res.status(401).redirect("/login");
@@ -120,7 +120,7 @@ app.get("/applicationData", async (req, res) => {
         return res.status(401).redirect("/login");
       }
        
-      const collectionName = await req.query.key
+      const collectionName = req.query.key;
       const db = await connectToDatabase();
       const applicationData = await db.collection(`${collectionName}`).find().toArray();
 
@@ -150,8 +150,7 @@ app.get("/collectionsNames", async (req, res) => {
       const collectionsList = await db.listCollections().toArray();
       let collectionsNames = collectionsList.map(({ name }) => name);
       collectionsNames = collectionsNames.filter(
-        (name) => name !== "adminUsers"
-      );
+        (value) => !isNaN(value));
       collectionsNames = collectionsNames.sort((a, b) => a - b);
       res.status(200).json(collectionsNames);
     });
@@ -161,3 +160,54 @@ app.get("/collectionsNames", async (req, res) => {
   }
 });
 
+app.get("/dates", async (req, res) => {
+  try {
+    const token = req.cookies["lg"];
+
+    if (!token) {
+      return res.status(401).redirect("/login");
+    }
+
+    jwt.verify(token, secretKey, async (err, decoded) => {
+      if (err) {
+        return res.status(401).redirect("/login");
+      }
+       
+      const db = await connectToDatabase();
+      const dates = await db.collection('dates').findOne({name : "dates"});
+      res.status(200).json(dates);
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).redirect("/submits/faild.html");
+  }
+});
+
+
+app.post("/dates", async (req, res) => {
+  const datesData = req.body;
+  try {
+    const token = req.cookies["lg"];
+
+    if (!token) {
+      return res.status(401).redirect("/login");
+    }
+
+    jwt.verify(token, secretKey, async (err, decoded) => {
+      if (err) {
+        return res.status(401).redirect("/login");
+      }
+       
+      const db = await connectToDatabase();
+      const updatedDates = await db.collection('dates').findOneAndUpdate(
+        { name: 'dates' },
+        datesData,
+        { new: true, upsert: true }
+      ).exec();
+      res.json(updatedDates);
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).redirect("/submits/faild.html");
+  }
+});

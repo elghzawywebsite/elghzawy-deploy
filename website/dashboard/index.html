@@ -5,27 +5,114 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>dashboard</title>
     <link href="/dashboard/styles.css" rel="stylesheet" >
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 </head>
 
 <body>
-    <div id="container">
+<main id="container">
+<div id="hamburgerNav">
+    <h1>Mr Engineer</h1>
+    <div class="hamburger" > 
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+</div>
+</div>
+
+<nav id="mainNav" >
+    <h1>لوحة التحكم</h1>
+    <ul class="navList">
+    <li id="tableSelect" class="navMenu" data-id="tableDiv">الحجوزات</li>
+    <li id='abc' class="navMenu" data-id="inputsContainer">تغيير المواعيد</li>
+    </ul>
+</nav>
+
+<div id="content">
+        <div id="inputsContainer" class="contentItem">
+            <form id="dates-form">
+                <div class="inputsdiv">
+                  <label for="prep1">Prep 1:</label>
+                  <div id="prep1">
+                    <input  type="text" name="prep1" required>
+                    <input type="text" name="prep1" required>
+                    <input type="text" name="prep1" required>
+                  </div> 
+                  </div>
+
+                <div class="inputsdiv">
+                  <label for="prep2">Prep 2:</label>
+                  <div id="prep2">
+                    <input type="text" name="prep2" required>
+                    <input type="text" name="prep2" required>
+                    <input type="text" name="prep2" required>
+                </div>
+                  </div>
+
+                <div class="inputsdiv">
+                  <label for="prep3">prep 3:</label>
+                  <div id="prep3">
+                    <input type="text" name="prep3" required>
+                    <input type="text" name="prep3" required>
+                    <input type="text" name="prep3" required>
+                </div> 
+                  </div>
+
+                <div class="inputsdiv">
+                  <label for="sec1">sec 1:</label>
+                  <div id="sec1">
+                    <input type="text" name="sec1" required>
+                    <input type="text" name="sec1" required>
+                    <input type="text" name="sec1" required>
+                </div>   
+                  </div>
+
+                <div class="inputsdiv">
+                  <label for="sec2s">sec 2s:</label>
+                  <div id="sec2s">
+                    <input type="text" name="sec2s" required>
+                    <input type="text" name="sec2s" required>
+                    <input type="text" name="sec2s" required>
+                </div>  
+                  </div>
+
+                <div class="inputsdiv">
+                  <label for="sec2l">sec 2l:</label>
+                  <div id="sec2l">
+                    <input type="text" name="sec2l" required>
+                    <input type="text" name="sec2l" required>
+                    <input type="text" name="sec2l" required>
+                </div>  
+                  </div>
+
+                <div class="inputsdiv">
+                  <label for="sec3">sec 3:</label>
+                  <div id="sec3">
+                    <input type="text" name="sec3" required>
+                    <input type="text" name="sec3" required>
+                    <input type="text" name="sec3" required>
+                </div>
+                  </div>    
+               <div id="buttonDiv"><button type="submit">Save Dates</button></div>
+              </form>
+            </div>
+
+
+    <div id="tableDiv" class="contentItem">
         <h1>
             الحجوزات
         </h1>
         <div id="selectDiv">
-
+    
         <div>
             <select id="select" class="item">
                 <option value="" selected disabled>اختر- العام</option>
             </select>
         </div>
-
+    
         </div>
 
-<div id="content">
-            
-    <div id="tableDiv">
+        <div id="tableWrap">
         <table>
             <thead>
                 <th>الاسم</th>
@@ -37,10 +124,14 @@
             <tbody id="tableBody"></tbody>
     
         </table>
-    </div>
-</div>
+        </div>
 
     </div>
+
+</div>
+
+
+</main>
 
 <script src="/dashboard/script.js" type="text/javascript"></script>
 </body> 

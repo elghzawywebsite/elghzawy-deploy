@@ -1,44 +1,33 @@
-const secondSelectOptions = {
-  prep1: ["(الحكماء) (الساعة ٦) (الاحد)"],
-
-  prep2: ["(الحكماء) (الساعة ٧) (الاحد)"],
-
-  prep3: ["(الحكماء) (الساعة ١) (الاحد)",
-   "(المنشية) (الساعة ١) (السبت)"],
-
-  sec1: [
-    "(الحكماء ) (الساعة ٧) ( السبت)",
-    "(المنشية) (الساعة ٤) (السبت)",
-    "(القومية) (الساعة ٤) (الاحد)"
-  ],
-  sec2s: [
-    "(الحكماء) (الساعة ٦) (السبت)",
-    "(المنشية) (الساعة ٥) (السبت)",
-    "(القومية) (الساعة ٥) (الاحد)"
-  ],
-  sec2l: [
-    "(الحكماء) (الساعة ٦) (السبت)",
-    "(المنشية) (الساعة ٥) (السبت)",
-    "(القومية) (الساعة ٥) (الاحد)"
-  ],
-  sec3: ["(القومية) (الساعة ٧) (يوميا)",
-"(الحكماء) (الساعة ٢) (يوميا)"]
-};
-
+ let secondSelectOptions ;
+window.onload = async ()=>{
+  try{
+  const response = await fetch('/dates');
+  secondSelectOptions = await response.json();
+  }catch(err){
+    console.log(err);
+    return window.location.href = "/submits/faild.html" ;
+  }
+  };
 
   const firstSelect = document.getElementById("grade");
   const secondSelect = document.getElementById("time");
 
-  firstSelect.addEventListener("change", function () {
-    let value = firstSelect.value;
-    let firstSelectOption = secondSelectOptions[value];
-    let options = '<option value="" selected disabled>اختر الميعاد</option>'
+  firstSelect.addEventListener("change", async () => {
+    try{
+      let value = await firstSelect.value;
+      let firstSelectOption = await secondSelectOptions[value];
+      let options = '<option value="" selected disabled>اختر الميعاد</option>' ;
+  
+      firstSelectOption.forEach((element) => {
+       options += `<option>${element}</option>`
+  
+      });
+      secondSelect.innerHTML = options ;
+    }catch(err){
+      console.log(err);
+      return window.location.href = "/submits/faild.html" ;
+    }
 
-    firstSelectOption.forEach((element) => {
-     options += `<option>${element}</option>`
-
-    });
-    secondSelect.innerHTML = options ;
   });
 
 

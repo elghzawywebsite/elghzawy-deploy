@@ -1,7 +1,10 @@
 let tableBody = document.getElementById('tableBody');
 let select = document.getElementById('select');
-let newTr = document.createElement('tr')
-let newTd = document.createElement('td')
+let tableDiv = document.getElementById('tableDiv');
+let inputsContainer = document.getElementById('inputsContainer');
+const navItems = document.querySelectorAll('.navMenu');
+const contentItem = document.querySelectorAll('.contentItem');
+let tableSelect = document.getElementById('tableSelect');
 
 function gradeReform(ele) {
   switch (ele.grade) {
@@ -41,7 +44,6 @@ let selectBuild = async () => {
 }
 selectBuild();
    
-  
     let buildTable = async (key) => {
       try{
         tableBody.innerHTML = '';
@@ -71,8 +73,45 @@ selectBuild();
     return window.location.href = "/login" ;
   }
     };
+
+
 select.addEventListener('input', (e) => {
 buildTable(e.target.value)
 }
 );
 
+
+navItems.forEach((item)=>{
+
+item.addEventListener('click',(e)=>{
+  navItems.forEach(item => item.classList.remove('active'));
+ contentItem.forEach(item => item.classList.remove('active'));
+
+  let id = e.target.dataset.id;
+  let element = document.getElementById(`${id}`);
+
+  e.target.classList.add('active');
+  element.classList.add('active');
+  
+
+});
+
+});
+
+tableSelect.click()
+
+/* ---------------------------------------------------------------------------------------------*/
+const hamburger = document.querySelector(".hamburger");
+const navMenu = document.querySelector("nav");
+hamburger.addEventListener("click",() => {
+  hamburger.classList.toggle("active");
+  navMenu.classList.toggle("active");
+});
+const navLink = document.querySelectorAll(".navMenu").forEach(n => n.addEventListener("click",()=>{
+  hamburger.classList.remove("active");
+  navMenu.classList.remove("active");
+}));
+/* ---------------------------------------------------------------------------------------------*/
+let addDateInput = (grade)=>{
+let inputDiv = document.getElementById(grade);
+}

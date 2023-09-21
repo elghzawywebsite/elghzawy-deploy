@@ -7,19 +7,129 @@
   box-sizing: border-box;
   text-decoration: none;
   scroll-behavior: smooth;
+  direction: rtl;
+  list-style: none;
 }
-h1{
+#container{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+
+}
+#content{
+    width: 100%;
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+#mainNav{
+  display: none;
+ 
+}
+#mainNav.active{
+    width: 240px;
+    height: 100vh;
+    background-color: rgb(251, 244, 244);
+    display: flex;
+    flex-direction: column;
+    justify-content:flex-start;
+    align-items: center;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 998;
+
+}
+#hamburgerNav{
+  width: 100%;
+  height: 50px;
+  z-index: 999;
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  direction: ltr;
+  background: linear-gradient(to right, #f7b733, #fc4a1a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+
+}
+#hamburgerNav h1{
+  margin-left: 20px;
+  font-size: 24px;
+}
+.hamburger{
+  width: 40px;
+  display: block;
+  margin-right: 15px;
+  
+}
+.hamburger.active .bar:nth-child(2){
+  opacity: 0;
+
+}
+.hamburger.active .bar:nth-child(1){
+ transform: translateY(8px) rotate(45deg);
+
+}
+.hamburger.active .bar:nth-child(3){
+  transform: translateY(-8px) rotate(-45deg);
+}
+.bar{
+  display: block;
+  width: 30px;
+  height: 3px;
+  margin: 5px auto;
+  border-radius: 25px;
+  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  background:linear-gradient(to right, #f7b733, #fc4a1a);
+}
+.navList{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+}
+#mainNav h1{
+  text-align: center;
+  margin: 20px;
+  background: linear-gradient(to right, #f7b733, #fc4a1a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.navMenu{
+    width: 80%;
+    margin: 10px 0;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 600;
+    border-radius: 7px;
+}
+.navMenu.active{
+background-color: orange;
+transition: 0.5s ease;
+}
+#tableDiv h1{
     text-align: center;
-    margin: 20px;
 }
 #selectDiv{
-margin: 20px 0;
-width: 100%;
-display: flex;
-flex-wrap: wrap;
-align-items: center;
-justify-content: center;
-direction: rtl;
+  margin: 20px 0;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
 }
 #selectDiv .item{
     width: 300px;
@@ -49,33 +159,39 @@ select {
   select option{
     text-align: center;
   }
-#container{
+
+
+  #tableDiv{
+    display: none;
+  }
+#tableDiv.active{
+    margin-bottom: 30px;
     width: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    position: relative;
 
 }
-#content{
-    width: 100%;
-}
-#tableDiv{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 30px;
-    width: 100%;
+#tableWrap{
+  width: 95%;
+  height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: scroll;
+  border: 2px solid #f0eeee;
 
 }
 table{
-    width: 90%;
+    width: 100%;
     font-size: 25px;
     border-collapse: collapse;
 }
 table , tbody , td , tr {
     border: 2px solid white;
-     direction: rtl;
     
 }
 thead , th{
@@ -95,12 +211,84 @@ tr:nth-child(odd) {
   tr:nth-child(even) {
     background-color: #dddddd; 
   }
+  #inputsContainer{
+display: none;
+  }
+#inputsContainer.active{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+.inputs{
+    width: 80%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+.inputs h1{
+margin: 30px;
+}
+#dates-form{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
+#dates-form input{
+display: flex;
+align-items: center;
+justify-content: center;
+width: 250px;
+height: 40px;
+margin-bottom: 15px;
+border-radius: 5px;
+}
+#dates-form label{
+margin: 5px;
+}
+
+#dates-form .inputsdiv{
+width: 20%;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+margin: 20px 50px;
+}
+#dates-form #buttonDiv{
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#dates-form #buttonDiv button{
+  background: #212121;
+  width: 300px;
+  text-align: center;
+  padding: 15px 18px;
+  font-weight: bold;
+  color: #fff;
+  display: inline-block;
+  margin-top: 40px ;
+  border-radius: 7px;
+  transition: transform 0.7s ease;
+}
+#dates-form #buttonDiv button:hover{
+  transform: scale(1.1);
+  color: orange;
+}
 
 @media(max-width : 500px){
     
     table{
         font-size: 14px;
-        width: 97%;
     }
     thead , th{
         font-size: 13px;
@@ -110,4 +298,17 @@ tr:nth-child(odd) {
         height: 30px;
         font-size: 14px;
     }
+    .navMenu{
+      font-size: 15px;
+    }
+    #tableWrap{
+      width: 99%;
+    }
+    #hamburgerNav h1{
+      font-size: 20px;
+    }
+    .inputs{
+      width: 100%;
+    }
+
 }
